@@ -1,24 +1,37 @@
 const rootSocket = (io) => {
     // LISTE DES USERS CONNECTES
-    let users = [];
+    let currentSession = {};
 
     io.on('connection', (socket) => {
-        console.log(`New visitor ⚡: ${socket.id}`);
-    
-        //Listens when a new user joins the server
+        
+        socket.on('startSession', (data) => {
+
+            currentSession = data;
+            io.emit('newSessionCode', currentSession.code);
+            io.emit('setResp', currentSession.resp);
+            io.emit('startSessionResponse', currentSession);
+        });
+
+        socket.on('getSessionCode', () => {
+            io.emit('newSessionCode', currentSession.code);
+        });
+
+        socket.on('getResp', () => {
+            io.emit('setResp', currentSession.resp);
+        });
+        
         socket.on('newUser', (data) => {
             //Adds the new user to the list of users
-            users.push(data);
+            currentSession.voters.push(data);
             //Sends the list of users to the client
-            io.emit('newUserResponse', users);
+            io.emit('newUserResponse', currentSession);
         });
     
         socket.on('disconnect', () => {
-            console.log('🔥A user disconnected');
             //Updates the list of users when a user disconnects from the server
-            users = users.filter((user) => user.socketID !== socket.id);
+            currentSession.voters.filter((user) => user.socketID !== socket.id);
             //Sends the list of users to the client
-            io.emit('newUserResponse', users);
+            io.emit('newUserResponse', currentSession.voters);
             socket.disconnect();
         });
     });
