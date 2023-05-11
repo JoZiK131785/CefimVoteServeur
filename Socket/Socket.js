@@ -29,9 +29,9 @@ const rootSocket = (io) => {
     
         socket.on('disconnect', () => {
             //Updates the list of users when a user disconnects from the server
-            currentSession.voters.filter((user) => user.socketID !== socket.id);
+            currentSession.voters && (currentSession.voters = currentSession.voters.filter((user) => user.socketID !== socket.id));
             //Sends the list of users to the client
-            io.emit('newUserResponse', currentSession.voters);
+            io.emit('newUserResponse', currentSession);
             socket.disconnect();
         });
     });
