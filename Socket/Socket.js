@@ -3,6 +3,7 @@ const rootSocket = (io) => {
     let currentSession = {};
 
     io.on('connection', (socket) => {
+        console.log('a user connected');
         
         socket.on('startSession', (data) => {
 

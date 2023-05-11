@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: false }));
 
 const socketIO = require('socket.io')(http, {
     cors: {
-        origin: "https://cefim-vote.vercel.app"
+        origin: "http://localhost:3000"
     }
 });
 
